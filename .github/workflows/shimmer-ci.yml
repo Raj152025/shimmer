@@ -2,8 +2,8 @@ name: Shimmer CI
 
 on:
   push:
-    branches: ["**"]         # run on every push to any branch
-  pull_request:               # run on all PRs
+    branches: ["**"]         # Run on every push to any branch
+  pull_request:               # Run on all PRs
 
 jobs:
   build:
@@ -21,34 +21,19 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Java 11
+      - name: Set up Java 11
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: '11'
 
-      - name: Setup Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+      - name: Set up Gradle
+        uses: gradle/wrapper-validation-action@v2
 
-      - name: Install build tools
+      - name: Build with Gradle
         run: |
-          sudo apt-get update
-          sudo apt-get install -y maven npm
+          ./gradlew clean build -x test
 
-      - name: Build server
+      - name: Run Tests
         run: |
-          cd shimmer-resource-server   # <<-- replace this with correct subfolder containing pom.xml
-          mvn clean install -DskipTests
-
-      - name: Run server tests
-        run: |
-          cd shimmer-resource-server
-          mvn test
-
-      - name: Build console
-        run: |
-          cd console                  # <<-- replace with correct console folder if needed
-          npm ci
-          npm run build
+          ./gradlew test
