@@ -2,9 +2,9 @@ name: Shimmer CI Failure Analyzer Demo
 
 on:
   push:
-    branches: [ main ]
+    branches: [ '*' ]   # Run on every commit to any branch
   pull_request:
-    branches: [ main ]
+    branches: [ '*' ]   # Run on PRs targeting any branch
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
           distribution: temurin
           java-version: '8'
 
-      # Step 3: Optional: Disable Bintray plugin to avoid missing dependency
+      # Step 3: Disable Bintray plugin to avoid missing dependency
       - name: Disable Bintray plugin
         run: |
           find . -name "build.gradle" -exec sed -i '/apply plugin: '\''com.jfrog.bintray'\''/d' {} \;
@@ -37,6 +37,6 @@ jobs:
       - name: Build project
         run: ./gradlew clean build -x test
 
-      # Step 6: Optionally, run tests if you fix dependencies
+      # Optional: run tests if dependencies are fixed
       # - name: Run tests
       #   run: ./gradlew test
